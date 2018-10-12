@@ -3,7 +3,7 @@ library(ggplot2)
 library(shiny)
 
 
-raw_data = read.csv("kepler.csv")
+raw_data = read.csv("data/kepler.csv")
 
 use_data = raw_data %>% filter(., planet_status == "Confirmed") %>%
   select(., star_name, star_distance, planet_name = X..name, detection_type,
