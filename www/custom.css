@@ -1,0 +1,17 @@
+.main-header .logo {
+  font-family: "Georgia", Times, "Times New Roman", serif;
+  font-weight: bold;
+  font-size: 18px;
+  position: relative;
+  left: 20px;
+  z-index: 10;
+}
+
+.main-header .sidebar-toggle {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    background: DarkGrey;
+}
+
