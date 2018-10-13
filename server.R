@@ -1,3 +1,5 @@
+library(scales)
+
 function(input, output) {
   
   output$bar1 = renderPlot({
@@ -18,7 +20,7 @@ function(input, output) {
               size = 9,
               colour = "white"),
             axis.text.x = element_text( 
-              size = 8,
+              size = 9,
               colour = "white",
               vjust = 0.75, 
               angle = 45),
@@ -36,7 +38,10 @@ function(input, output) {
                          "Planets Discovered in", input$slider1),
            x = "Detection Method",
            y = "Planet Count",
-           colour = "White")})
+           colour = "White") +
+      scale_y_continuous(breaks = pretty_breaks(
+        min(5, length(bar1data$detection_type))))
+    })
   
   
   output$scatter1 = renderPlot({
@@ -52,7 +57,7 @@ function(input, output) {
       theme(plot.subtitle = element_text(vjust = 1),
             plot.caption = element_text(vjust = 1),
             plot.title = element_text(hjust = 0.5),
-            legend.title = element_text(size = 8),
+            legend.title = element_text(size = 9),
             plot.background = element_rect(fill = "ghostwhite"),
             legend.key = element_rect(fill = "ghostwhite"), 
             legend.background = element_rect(fill = "ghostwhite"),
