@@ -12,8 +12,14 @@ dashboardPage(
     
     #initialize tabs on sidebar
     sidebarMenu(
-      menuItem("Discoveries", tabName = "discovs", icon = icon("th-large", lib = "glyphicon")),
-      menuItem("Data", tabName = "data", icon = icon("database")))
+      menuItem("Discoveries", tabName = "discovs",
+               icon = icon("th-large", lib = "glyphicon")),
+      menuItem("Data", tabName = "data", icon = icon("database"))),
+    
+    checkboxGroupInput("checkGroup",
+                       h3("Detection Methods"),
+                       choices = unique(use_data$detection_type),
+                       selected = unique(use_data$detection_type))
     ),
   
   dashboardBody(
@@ -42,13 +48,22 @@ dashboardPage(
                         round = TRUE, sep = '', width = '100%'))),
         
         #second row, two graphs
-        fluidRow(  
+        fluidRow(
           box(plotOutput("bar1", height = 400), background = "black"),
           box(plotOutput("scatter1", height = 400))
         )
+      ),
+      
+      #tab to view data directly
+      tabItem(tabName = "data",
+              fluidRow(
+                checkboxGroupInput("selected",
+                                   h3("Variables"),
+                                   inline = TRUE,
+                                   choices = unique(
+                                     names(use_data))[c(-3, -4)])),
+              fluidRow(box(DT::dataTableOutput("table"), width = 12))
       )
-      
-      
       
     )
   )

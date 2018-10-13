@@ -2,7 +2,9 @@ function(input, output) {
   
   output$bar1 = renderPlot({
     #filter by selected year
-    bar1data = scatter_data %>% filter(., discovery_year == input$slider1)
+    bar1data = scatter_data %>%
+      filter(., discovery_year == input$slider1) %>%
+      filter(., detection_type %in% input$checkGroup)
 
     #produce plot of one year's discoveries
     ggplot(bar1data, aes(x = detection_type)) +
@@ -28,7 +30,10 @@ function(input, output) {
               hjust = .5),
             panel.background = element_rect(fill = "black"),
             plot.background = element_rect(fill = "black")) +
-      labs(title = paste("Number of Planets Discovered in", input$slider1),
+      labs(title = paste(ifelse(length(bar1data$detection_type) == 0,
+                                "No Relevant",
+                                "Number of"),
+                         "Planets Discovered in", input$slider1),
            x = "Detection Method",
            y = "Planet Count",
            colour = "White")})
@@ -37,7 +42,8 @@ function(input, output) {
   output$scatter1 = renderPlot({
     #organize data, only include planets with known mass
     scatter1data = scatter_data %>%
-      filter(., discovery_year <= input$slider1, !is.na(planet_mass))
+      filter(., discovery_year <= input$slider1, !is.na(planet_mass)) %>%
+      filter(., detection_type %in% input$checkGroup)
     
     #create scatterplot of all year's discoveries thru selected years
     ggplot(scatter1data, aes(x = discovery_year, y = planet_mass,
@@ -63,6 +69,14 @@ function(input, output) {
       theme(legend.text = element_text(size = 9),
             legend.background = element_rect(size = 0.7))})
   
-  
+  # show data using DataTable
+  output$table <- DT::renderDataTable({
+    datatable(filter(select(use_data,
+                            append(c("planet_name", "detection_type"),
+                                   input$selected)),
+                     detection_type %in% input$checkGroup),
+              rownames=FALSE) %>% 
+      formatStyle(., input$selected, background="skyblue", fontWeight='bold')
+  })
   
 }
