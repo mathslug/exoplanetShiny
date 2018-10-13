@@ -1,4 +1,5 @@
 *.csv
 *.DS_Store
-.RHistory
-*.dcf
+.Rhistory
+rsconnect/*
+.RData
