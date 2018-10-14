@@ -1,5 +1,3 @@
-library(shinydashboard)
-library(googleVis)
 
 
 dashboardPage(
@@ -38,8 +36,8 @@ dashboardPage(
         fluidRow(
           box(
             width = 12,
-            title = "Visualize the New and Total Exoplanet Discoveries by Year
-            and Detection Method",
+            title = "Use the slider to view all exoplanets discovered through the selected
+            year for which there are sufficient data.",
             solidHeader = TRUE,
             collapsible = TRUE,
             collapsed = TRUE,
@@ -47,10 +45,9 @@ dashboardPage(
                         max(use_data$discovery_year), 2018, ticks = FALSE,
                         round = TRUE, sep = '', width = '100%'))),
         
-        #second row, two graphs
+        #second row, first scatter dist, mass graph
         fluidRow(
-          box(plotOutput("bar1", height = 400), background = "black"),
-          box(plotOutput("scatter1", height = 400))
+          box(plotOutput("scatter1", height = 450), width = '90%')
         )
       ),
       

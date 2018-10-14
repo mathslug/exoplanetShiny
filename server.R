@@ -1,78 +1,46 @@
-library(scales)
+
 
 function(input, output) {
-  
-  output$bar1 = renderPlot({
-    #filter by selected year
-    bar1data = scatter_data %>%
-      filter(., discovery_year == input$slider1) %>%
-      filter(., detection_type %in% input$checkGroup)
-
-    #produce plot of one year's discoveries
-    ggplot(bar1data, aes(x = detection_type)) +
-      geom_bar() +
-      theme(plot.subtitle = element_text(vjust = 1), 
-            plot.caption = element_text(vjust = 1), 
-            panel.grid.major = element_line(colour = "white",
-                                            linetype = "blank"),
-            panel.grid.minor = element_line(linetype = "blank"), 
-            axis.title = element_text( 
-              size = 9,
-              colour = "white"),
-            axis.text.x = element_text( 
-              size = 9,
-              colour = "white",
-              vjust = 0.75, 
-              angle = 45),
-            axis.text.y = element_text(
-              colour = "white"),
-            plot.title = element_text(
-              size = 13,
-              colour = "white",
-              hjust = .5),
-            panel.background = element_rect(fill = "black"),
-            plot.background = element_rect(fill = "black")) +
-      labs(title = paste(ifelse(length(bar1data$detection_type) == 0,
-                                "No Relevant",
-                                "Number of"),
-                         "Planets Discovered in", input$slider1),
-           x = "Detection Method",
-           y = "Planet Count",
-           colour = "White") +
-      scale_y_continuous(breaks = pretty_breaks(
-        min(5, length(bar1data$detection_type))))
-    })
-  
   
   output$scatter1 = renderPlot({
     #organize data, only include planets with known mass
     scatter1data = scatter_data %>%
-      filter(., discovery_year <= input$slider1, !is.na(planet_mass)) %>%
+      filter(., discovery_year <= input$slider1, !is.na(planet_mass),
+             !is.na(star_distance)) %>%
       filter(., detection_type %in% input$checkGroup)
+
     
     #create scatterplot of all year's discoveries thru selected years
-    ggplot(scatter1data, aes(x = discovery_year, y = planet_mass,
+    ggplot(scatter1data, aes(x = star_distance, y = planet_mass,
                              color = detection_type)) +
-      geom_point(position = 'jitter') +
+      geom_point(size = 3) +
+      scale_color_manual(values = color_map) +
       theme(plot.subtitle = element_text(vjust = 1),
             plot.caption = element_text(vjust = 1),
-            plot.title = element_text(hjust = 0.5),
+            plot.title = element_text(hjust = 0.5, size = 20),
             legend.title = element_text(size = 9),
             plot.background = element_rect(fill = "ghostwhite"),
             legend.key = element_rect(fill = "ghostwhite"), 
             legend.background = element_rect(fill = "ghostwhite"),
             legend.position = "bottom",
             legend.direction = "horizontal") +
+      guides(colour = guide_legend(nrow = 1)) +
       labs(title = paste("Discoveries Through", input$slider1),
-           x = "Year of Discovery",
-           y = "Planet Mass (M_Jup)",
+           x = "Distance of Exoplanet Star from Sun (Parsecs)",
+           y = "Planet Mass (Jupiter Masses)",
            colour = NULL) +
+      theme(axis.text=element_text(size=11),
+            axis.title=element_text(size=12,face="bold")) +
       theme(panel.grid.major = element_line(linetype = "blank"),
             panel.grid.minor = element_line(linetype = "blank"),
             panel.background = element_rect(fill = "ghostwhite")) +
       theme(panel.background = element_rect(fill = "white")) +
-      theme(legend.text = element_text(size = 9),
-            legend.background = element_rect(size = 0.7))})
+      theme(legend.text = element_text(size = 12)) +
+      scale_x_log10(name = waiver(), breaks = c(1,10,100,1000,10000),
+                    limits = c(1,13000)) +
+      scale_y_log10(name = waiver(), breaks = c(1e-4, 1e-1, 1e+2),
+                    limits = c(1e-6, 2e+2))
+    })
   
   # show data using DataTable
   output$table <- DT::renderDataTable({
