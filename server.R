@@ -1,5 +1,3 @@
-
-
 function(input, output) {
   
   output$scatter1 = renderPlot({
@@ -43,13 +41,72 @@ function(input, output) {
     })
   
   # show data using DataTable
-  output$table <- DT::renderDataTable({
+  output$table = renderDataTable({
     datatable(filter(select(use_data,
                             append(c("planet_name", "detection_type"),
                                    input$selected)),
                      detection_type %in% input$checkGroup),
               rownames=FALSE) %>% 
       formatStyle(., input$selected, background="skyblue", fontWeight='bold')
+  })
+  
+  
+  
+  output$bar1 = renderPlot({
+    #filter by selected year
+    bar1data = scatter_data %>%
+      filter(., detection_type %in% input$checkGroup)
+    
+    #produce plot of one year's discoveries
+    ggplot(bar1data, aes(x = detection_type, fill = detection_type)) +
+      geom_bar() +
+      theme(plot.subtitle = element_text(vjust = 1), 
+            plot.caption = element_text(vjust = 1), 
+            panel.grid.major = element_line(colour = "white", linetype = "blank"),
+            panel.grid.minor = element_line(linetype = "blank"), 
+            axis.title = element_text(size = 10, colour = "white"),
+            axis.text.x = element_text(size = 9, colour = "white", vjust = 0.75,
+                                       angle = 45),
+            axis.text.y = element_text(colour = "white"),
+            plot.title = element_text(size = 13, colour = "white", hjust = .5),
+            panel.background = element_rect(fill = "black"),
+            plot.background = element_rect(fill = "black")) +
+      labs(title = "Planets Discovered by Method",
+           x = "Detection Method", y = "Planet Count", colour = "White") +
+      scale_fill_manual(values = color_map)
+  })
+  
+  
+  
+  
+  #make a graph of the propertion of detection methods / year
+  output$bar2 = renderPlot({
+    bar2data = scatter_data %>%
+      filter(., detection_type %in% input$checkGroup) %>%
+      select(., detection_type, discovery_year) %>%
+      group_by(., discovery_year, detection_type) %>%
+      summarise(., discoveries = n()) %>%
+      mutate(., prop = 100 * discoveries / sum(discoveries))
+      
+    ggplot(bar2data, aes(x = discovery_year, y = prop, fill = detection_type)) +
+      geom_col(position = "stack") +
+      theme(plot.subtitle = element_text(vjust = 1), 
+            plot.caption = element_text(vjust = 1), 
+            panel.grid.major = element_line(colour = "white", linetype = "blank"),
+            panel.grid.minor = element_line(linetype = "blank"), 
+            axis.title = element_text(size = 10, colour = "white"),
+            axis.text.x = element_text(size = 9, colour = "white", vjust = 0.75,
+                                       angle = 45),
+            axis.text.y = element_text(colour = "white"),
+            plot.title = element_text(size = 13, colour = "white", hjust = .5),
+            panel.background = element_rect(fill = "black"),
+            plot.background = element_rect(fill = "black")) +
+      labs(title = "Breakdown of Discovery Method by Year",
+           x = "Year", y = "Percentage",
+           colour = "White") + theme(axis.text = element_text(size = 11), 
+    legend.position = "none") +
+      scale_fill_manual(values = color_map)
+      
   })
   
 }

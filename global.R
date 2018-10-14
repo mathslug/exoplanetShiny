@@ -5,6 +5,9 @@ library(DT)
 library(shinydashboard)
 library(scales)
 
+#Project by John to explore capabilities of R Shiny
+#Data from exoplanet Encyclopedia: http://exoplanet.eu/catalog/
+
 
 raw_data = read.csv("data/exoplanet.eu_catalog.csv")
 
@@ -33,8 +36,3 @@ color_map = c("#0000ff", "#55ffff", "#FF0000",
               "#eedc31", "#7937fc", "#26ff3f")
 
 names(color_map) = unique(use_data$detection_type)
-
-
-
-
-

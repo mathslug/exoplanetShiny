@@ -1,5 +1,3 @@
-
-
 dashboardPage(
   dashboardHeader(title = "Exoplanet Search"),
   
@@ -11,6 +9,8 @@ dashboardPage(
     #initialize tabs on sidebar
     sidebarMenu(
       menuItem("Discoveries", tabName = "discovs",
+               icon = icon("sort", lib = "glyphicon")),
+      menuItem("Methods", tabName = "props",
                icon = icon("th-large", lib = "glyphicon")),
       menuItem("Data", tabName = "data", icon = icon("database"))),
     
@@ -60,8 +60,12 @@ dashboardPage(
                                    choices = unique(
                                      names(use_data))[c(-3, -4)])),
               fluidRow(box(DT::dataTableOutput("table"), width = 12))
-      )
+              ),
       
-    )
+      tabItem(tabName = "props",
+              fluidRow(box(plotOutput("bar2", height = 250), height = 250, width = '100%')),
+              fluidRow(box(plotOutput("bar1", height = 250), height = 250, width = '100%'))
+              )
+      )
   )
 )
