@@ -4,7 +4,7 @@ dashboardPage(
   dashboardSidebar(
     collapsed = TRUE,
     
-    sidebarUserPanel("by John", image = "earth.jpg"),
+    sidebarUserPanel('by John', image = "earth.jpg"),
     
     #initialize tabs on sidebar
     sidebarMenu(
@@ -12,6 +12,8 @@ dashboardPage(
                icon = icon("sort", lib = "glyphicon")),
       menuItem("Methods", tabName = "props",
                icon = icon("th-large", lib = "glyphicon")),
+      menuItem("Orbits", tabName = "orbits", 
+               icon = icon("refresh", lib = "glyphicon")),
       menuItem("Data", tabName = "data", icon = icon("database"))),
     
     checkboxGroupInput("checkGroup",
@@ -65,7 +67,21 @@ dashboardPage(
       tabItem(tabName = "props",
               fluidRow(box(plotOutput("bar2", height = 250), height = 250, width = '100%')),
               fluidRow(box(plotOutput("bar1", height = 250), height = 250, width = '100%'))
+              ),
+      
+      tabItem(tabName = "orbits",
+              fluidRow(box(title = "Visualize Orbits of Exoplanet Star Systems",
+                           footer = "Time measured in earth days. Distance shown in AUs.
+                           Orbits in multi-planet systems may not be accurate
+                           relative to each other."),
+                box(selectInput("star_system",
+                                   label = "Select Star System",
+                                   choices = unique(orbit_data$star_name),
+                                   selected = "HD 10180"
+                                   ))),
+              fluidRow(htmlOutput("orbit"))
               )
+      
       )
   )
 )

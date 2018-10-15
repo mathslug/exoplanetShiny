@@ -4,9 +4,12 @@ library(shiny)
 library(DT)
 library(shinydashboard)
 library(scales)
+library(googleVis)
 
 #Project by John to explore capabilities of R Shiny
 #Data from exoplanet Encyclopedia: http://exoplanet.eu/catalog/
+#Source for orbital math:
+#https://www.math.ubc.ca/~cass/courses/m309-01a/orbits.pdf
 
 
 raw_data = read.csv("data/exoplanet.eu_catalog.csv")
@@ -36,3 +39,30 @@ color_map = c("#0000ff", "#55ffff", "#FF0000",
               "#eedc31", "#7937fc", "#26ff3f")
 
 names(color_map) = unique(use_data$detection_type)
+
+
+
+#Get data for orbit graph
+orbit_data = raw_data %>% select(., star_name, star_mass,
+                                 planet_name = X..name,
+                                 period = orbital_period,
+                                 semi_major_axis,
+                                 eccentricity, detection_type) %>%
+  filter(., rowSums(is.na(.)) == 0) %>%
+  #Use formula relating eccentricity to major and minor axes of ellipse
+  #find distance from center of ellipse to star (foci)
+  mutate(., semi_minor_axis = semi_major_axis * sqrt(1 - eccentricity ^ 2),
+         center_to_star = semi_major_axis * eccentricity)
+  
+
+#funtion for use in finding eccentric anomaly for obital calculations.
+#will return zero if eccentric anomaly is correct
+ecc_anom_err = function(ecc_anom, mean_anom, eccen) {
+  return(mean_anom - ecc_anom + eccen * sin(ecc_anom))
+}
+
+
+
+
+
+
