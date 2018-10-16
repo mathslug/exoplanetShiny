@@ -8,13 +8,13 @@ dashboardPage(
     
     #initialize tabs on sidebar
     sidebarMenu(
-      menuItem("Discoveries", tabName = "discovs",
+      menuItem("Planet Scatterplot", tabName = "discovs",
                icon = icon("sort", lib = "glyphicon")),
-      menuItem("Methods", tabName = "props",
+      menuItem("Discovery Timeline", tabName = "props",
                icon = icon("th-large", lib = "glyphicon")),
-      menuItem("Orbits", tabName = "orbits", 
+      menuItem("Orbit Visualization", tabName = "orbits", 
                icon = icon("refresh", lib = "glyphicon")),
-      menuItem("Data", tabName = "data", icon = icon("database"))),
+      menuItem("Raw Data", tabName = "data", icon = icon("database"))),
     
     checkboxGroupInput("checkGroup",
                        h3("Detection Methods"),
@@ -42,7 +42,7 @@ dashboardPage(
             year for which there are sufficient data.",
             solidHeader = TRUE,
             collapsible = TRUE,
-            collapsed = TRUE,
+            collapsed = FALSE,
             sliderInput("slider1", "Select Year", min(use_data$discovery_year),
                         max(use_data$discovery_year), 2018, ticks = FALSE,
                         round = TRUE, sep = '', width = '100%'))),
@@ -57,11 +57,12 @@ dashboardPage(
       tabItem(tabName = "data",
               fluidRow(
                 checkboxGroupInput("selected",
-                                   h3("Variables"),
+                                   h3("Select Additional Columns to Show"),
                                    inline = TRUE,
                                    choices = unique(
                                      names(use_data))[c(-3, -4)])),
-              fluidRow(box(DT::dataTableOutput("table"), width = 12))
+              fluidRow(box(dataTableOutput("table"), width = 12, footer = "Data from
+                           The Exoplanet Encyclopedia, 2018"))
               ),
       
       tabItem(tabName = "props",
@@ -71,15 +72,17 @@ dashboardPage(
       
       tabItem(tabName = "orbits",
               fluidRow(box(title = "Visualize Orbits of Exoplanet Star Systems",
-                           footer = "Time measured in earth days. Distance shown in AUs.
-                           Orbits in multi-planet systems may not be accurate
-                           relative to each other."),
+                           footer = "Time measured in earth days. Position calculated 
+using Kepler's laws. Distance shown in AUs. (1 AU = average distance from the Earth to 
+the Sun.) All planets shown in a reference frame with +x axis collinear with orbit 
+perineum in multi-planet systems may not be accurate relative to each other."),
                 box(selectInput("star_system",
                                    label = "Select Star System",
                                    choices = unique(orbit_data$star_name),
                                    selected = "HD 10180"
                                    ))),
-              fluidRow(htmlOutput("orbit"))
+              fluidRow(htmlOutput("orbit")), 
+              fluidRow(box(dataTableOutput("orbitTable")))
               )
       
       )

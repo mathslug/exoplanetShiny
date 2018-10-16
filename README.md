@@ -46,3 +46,7 @@ See also the list of [contributors](https://github.com/your/project/contributors
 * NYC Data Science Academy
 * https://www.math.ubc.ca/~cass/courses/m309-01a/orbits.pdf
 
+## Further Work
+
+The database of exoplanet cadidates is much larger. Similar analyses on that dataset could be really interesting. I think I could rework the orbit page to remove star systems for which there are no planets that fit the critera in the sidebar from the drop down selection menu, possible with a reactive function. I think adding information on object masses to the orbit plot could also be interesting, perhaps correlated with point size on some scale.
+

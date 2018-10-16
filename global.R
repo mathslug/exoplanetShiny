@@ -15,9 +15,10 @@ library(googleVis)
 raw_data = read.csv("data/exoplanet.eu_catalog.csv")
 
 use_data = raw_data %>% filter(., planet_status == "Confirmed") %>%
-  select(., star_name, star_distance, planet_name = X..name, detection_type,
+  select(., star_name, star_mass, star_distance, planet_name = X..name, detection_type,
          planet_mass = mass,planet_radius = radius,
-         discovery_year = discovered, temp_calculated, temp_measured)
+         discovery_year = discovered, temp_calculated, temp_measured,
+         semi_major_axis, period = orbital_period, eccentricity)
 
 #add one missing discovery year. Earliest publication I could find regarding
 #this object is in 2018.
@@ -59,6 +60,41 @@ orbit_data = raw_data %>% select(., star_name, star_mass,
 #will return zero if eccentric anomaly is correct
 ecc_anom_err = function(ecc_anom, mean_anom, eccen) {
   return(mean_anom - ecc_anom + eccen * sin(ecc_anom))
+}
+
+
+#Function to get planet movement around a star for date range given certain parameters.
+#Uses Kepler's laws. Semi_minor_axis can be calculated from other parameters, but this
+#step is done on initialization of this app from all planets to save time during running.
+my_Kepler = function(planet, period, eccentricity, semi_major_axis,
+                     semi_minor_axis, center_to_star, days) {
+  
+  days_to_show = max(days) - min(days)
+  
+  #find mean anaomaly for each day, necessary to find
+  #eccentric anomaly for Kepler equ
+  mean_anomaly = 2 * pi * days / period
+  
+  #Find zero of ecc_anom_err for each mean anomaly to find eccentric anomaly
+  eccentric_anomaly = mean_anomaly
+  for(i in days + 1) {
+    this_ecc_anom_err = function(ecc_anom) {
+      return(ecc_anom_err(ecc_anom, mean_anomaly[i], eccentricity))
+    }
+    
+    eccentric_anomaly[i] = uniroot(this_ecc_anom_err,
+                                   interval = c(mean_anomaly[i] - 2,
+                                                mean_anomaly[i] + 2))$root
+  }
+  
+  #compute end-of-day x and y positions, assuming star is +x foci and
+  #major axis is aligned with x axis.
+  X_position = semi_major_axis * cos(eccentric_anomaly) - center_to_star
+  Y_position = semi_minor_axis * sin(eccentric_anomaly)
+  
+  #create data from for newly-calculated planet data.
+  planet_pos = data_frame(obj_name = rep(planet, days_to_show + 1),
+                          days, X_position, Y_position)
 }
 
 

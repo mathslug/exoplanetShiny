@@ -39,7 +39,7 @@ function(input, output) {
                     limits = c(1e-6, 2e+2))
     })
   
-  # show data using DataTable
+  # show all data using DataTable
   output$table = renderDataTable({
     datatable(filter(select(use_data,
                             append(c("planet_name", "detection_type"),
@@ -49,6 +49,15 @@ function(input, output) {
       formatStyle(., input$selected, background="skyblue", fontWeight='bold')
   })
   
+  
+  # show orbit data using DataTable
+  output$orbitTable = renderDataTable({
+    datatable(filter(orbit_data, star_name == input$star_system) %>%
+                filter(., detection_type %in% input$checkGroup) %>%
+                select(., planet_name, period, semi_major_axis, eccentricity),
+              rownames=FALSE) %>% 
+      formatStyle(., input$selected, background="skyblue", fontWeight='bold')
+  })
   
   #plot of discoveries by method
   output$bar1 = renderPlot({
@@ -124,8 +133,8 @@ function(input, output) {
     
     #initialize the system by chosing the star as the origin
     sys_pos = data_frame(obj_name = rep(star, days_to_show + 1),
-                          days, x_pos = rep(0, days_to_show + 1),
-                          y_pos = rep(0, days_to_show + 1))
+                          days, X_position = rep(0, days_to_show + 1),
+                          Y_position = rep(0, days_to_show + 1))
     
     for(planet in this_orbit_data$planet_name) {
       #get info needed to calculate planet motion, for later ease of access
@@ -139,30 +148,9 @@ function(input, output) {
       center_to_star = this_orbit_data[this_orbit_data$planet_name == planet,
                                        "center_to_star"]
       
-      #find mean anaomaly for each day, necessary to find
-      #eccentric anomaly for Kepler equ
-      mean_anomaly = 2 * pi * days / period
-      
-      #Find zero of ecc_anom_err for each mean anomaly to find eccentric anomaly
-      eccentric_anomaly = mean_anomaly
-      for(i in days + 1) {
-        this_ecc_anom_err = function(ecc_anom) {
-          return(ecc_anom_err(ecc_anom, mean_anomaly[i], eccentricity))
-        }
-
-        eccentric_anomaly[i] = uniroot(this_ecc_anom_err,
-                                       interval = c(mean_anomaly[i] - 2,
-                                                    mean_anomaly[i] + 2))$root
-        }
-      
-      #compute end-of-day x and y positions, assuming star is +x foci and
-      #major axis is aligned with x axis.
-      x_pos = semi_major_axis * cos(eccentric_anomaly) - center_to_star
-      y_pos = semi_minor_axis * sin(eccentric_anomaly)
-      
-      #create data from for newly-calculated planet data.
-      planet_pos = data_frame(obj_name = rep(planet, days_to_show + 1),
-                           days, x_pos, y_pos)
+      #Use my function to get planet position for date range
+      planet_pos = my_Kepler(planet, period, eccentricity, semi_major_axis,
+                           semi_minor_axis, center_to_star, days)
       
       #add to existing data set
       sys_pos = rbind(sys_pos, planet_pos)
@@ -182,7 +170,7 @@ function(input, output) {
     
     #create motion-plot
     gvisMotionChart(sys_pos, idvar = "obj_name", timevar = "days",
-                    xvar = "x_pos", yvar = "y_pos",
+                    xvar = "X_position", yvar = "Y_Position",
                     options = list(showTrails = TRUE, state=State))
     
   })
