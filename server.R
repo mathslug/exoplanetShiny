@@ -55,7 +55,7 @@ function(input, output) {
     datatable(filter(orbit_data, star_name == input$star_system) %>%
                 filter(., detection_type %in% input$checkGroup) %>%
                 select(., planet_name, period, semi_major_axis, eccentricity),
-              rownames=FALSE) %>% 
+              rownames=FALSE, options = list(dom = 't')) %>% 
       formatStyle(., input$selected, background="skyblue", fontWeight='bold')
   })
   
@@ -164,14 +164,19 @@ function(input, output) {
     
     #set parameters for motion chart
     State = '
-    {"colorOption":"_UNIQUE_COLOR"}
+    {"colorOption":"_UNIQUE_COLOR",
+     "sizeOption":"_UNISIZE", "yZoomedIn":false,"yAxisOption":"_NOTHING","yLambda":1}
     '
     
     
     #create motion-plot
     gvisMotionChart(sys_pos, idvar = "obj_name", timevar = "days",
                     xvar = "X_position", yvar = "Y_Position",
-                    options = list(showTrails = TRUE, state=State))
+                    options = list(showTrails = TRUE, state=State,
+                                   height = 700 * (max(sys_pos$Y_position) -
+                                                     min(sys_pos$Y_position)) /
+                                     (max(sys_pos$X_position) -
+                                        min(sys_pos$X_position)), width = 840))
     
   })
   

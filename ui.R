@@ -66,9 +66,9 @@ dashboardPage(
               ),
       
       tabItem(tabName = "props",
-              fluidRow(box(plotOutput("bar2", height = 250), height = 250, width = '100%')),
-              fluidRow(box(plotOutput("bar1", height = 250), height = 250, width = '100%'))
-              ),
+            fluidRow(box(plotOutput("bar2", height = 250), height = 250, width = '100%')),
+            fluidRow(box(plotOutput("bar1", height = 250), height = 250, width = '100%'))
+            ),
       
       tabItem(tabName = "orbits",
               fluidRow(box(title = "Visualize Orbits of Exoplanet Star Systems",
@@ -82,7 +82,7 @@ perineum in multi-planet systems may not be accurate relative to each other."),
                                    selected = "HD 10180"
                                    ))),
               fluidRow(htmlOutput("orbit")), 
-              fluidRow(box(dataTableOutput("orbitTable")))
+              fluidRow(box(dataTableOutput("orbitTable"), width = 12))
               )
       
       )
