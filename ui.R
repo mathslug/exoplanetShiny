@@ -38,7 +38,10 @@ dashboardPage(
         fluidRow(
           box(
             width = 12,
-            title = "Use the slider to view all exoplanets discovered through the selected
+            title = "Exoplanet Search: An educational webapp to help visualize the
+            properties of planets outside our solar system and the methods used to
+            find them.",
+            footer = "Use the slider to view all exoplanets discovered through the selected
             year for which there are sufficient data.",
             solidHeader = TRUE,
             collapsible = TRUE,
