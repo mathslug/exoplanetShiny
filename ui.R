@@ -77,7 +77,7 @@ using Kepler's laws. Distance shown in AUs. (1 AU = average distance from the Ea
 the Sun.) All planets shown in a reference frame with +x axis collinear with orbit 
 perineum in multi-planet systems may not be accurate relative to each other."),
                 box(selectInput("star_system",
-                                   label = "Select Star System",
+                                   label = "Select Planetary System",
                                    choices = unique(orbit_data$star_name),
                                    selected = "HD 10180"
                                    ))),
