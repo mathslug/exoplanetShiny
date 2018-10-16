@@ -13,7 +13,7 @@ You can:
 ## Getting Started
 
 See the webapp at: https://mathslug.shinyapps.io/exoplanetShiny/
-Or, pull this repo and run it using R Studio.
+Or, pull this repo and run it using R Studio. https://github.com/mathSlug/exoplanetShiny
 The data can be found: http://exoplanet.eu/catalog/
 
 ### Prerequisites
@@ -39,7 +39,6 @@ library(googleVis)
 
 * **John Bentley**  - [mathSlug](https://github.com/mathSlug)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## Acknowledgments
 
